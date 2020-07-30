@@ -1,9 +1,2 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="com.wfl.corodva.dingtalk" version="0.0.1"
-    xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>cordova-plugin-dingtalk</name>
-    <js-module name="cordova-plugin-dingtalk" src="www/cordova-plugin-dingtalk.js">
-        <clobbers target="cordova.plugins.cordova-plugin-dingtalk" />
-    </js-module>
-</plugin>
+<plugin id="com.wfl.corodva.dingtalk" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android"><name>cordova-plugin-dingtalk</name><js-module name="cordova-plugin-dingtalk" src="www/cordova-plugin-dingtalk.js"><clobbers target="cordova.plugins.cordova-plugin-dingtalk" /></js-module><platform name="android"><config-file parent="/*" target="res/xml/config.xml"><feature name="cordova-plugin-dingtalk"><param name="android-package" value="com.wfl.corodva.dingtalk.cordova-plugin-dingtalk" /></feature></config-file><config-file parent="/*" target="AndroidManifest.xml" /><source-file src="src/android/cordova-plugin-dingtalk.java" target-dir="src/com/wfl/corodva/dingtalk/cordova-plugin-dingtalk" /></platform><platform name="ios"><config-file parent="/*" target="config.xml"><feature name="cordova-plugin-dingtalk"><param name="ios-package" value="cordova-plugin-dingtalk" /></feature></config-file><source-file src="src/ios/cordova-plugin-dingtalk.m" /></platform></plugin>
