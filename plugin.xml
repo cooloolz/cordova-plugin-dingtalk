@@ -1,2 +1,53 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="com.wfl.corodva.dingtalk" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android"><name>cordova-plugin-dingtalk</name><js-module name="cordova-plugin-dingtalk" src="www/cordova-plugin-dingtalk.js"><clobbers target="cordova.plugins.cordova-plugin-dingtalk" /></js-module><platform name="android"><config-file parent="/*" target="res/xml/config.xml"><feature name="cordova-plugin-dingtalk"><param name="android-package" value="com.wfl.corodva.dingtalk.cordova-plugin-dingtalk" /></feature></config-file><config-file parent="/*" target="AndroidManifest.xml" /><source-file src="src/android/cordova-plugin-dingtalk.java" target-dir="src/com/wfl/corodva/dingtalk/cordova-plugin-dingtalk" /></platform><platform name="ios"><config-file parent="/*" target="config.xml"><feature name="cordova-plugin-dingtalk"><param name="ios-package" value="cordova-plugin-dingtalk" /></feature></config-file><source-file src="src/ios/cordova-plugin-dingtalk.m" /></platform></plugin>
+<plugin id="com.wfl.corodva.dingtalk" version="0.0.1"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>cordova-plugin-dingtalk</name>
+
+    <!-- 参数 -->
+    <preference name="DINGTALK_APPID" />
+
+    <js-module name="cordova-plugin-dingtalk" src="www/cordova-plugin-dingtalk.js">
+        <!-- 默认 -->
+        <!-- <clobbers target="cordova.plugins.cordova-plugin-dingtalk" /> -->
+        <clobbers target="cordova.plugins.dingtalk" />
+    </js-module>
+
+    <platform name="android">
+        <!-- 插件操作自动执行android-install.js -->
+        <hook type="after_plugin_add" src="src/android/install.js" />
+        <hook type="after_plugin_install" src="src/android/install.js" />
+        <hook type="before_plugin_rm" src="src/android/install.js" />
+        <hook type="before_plugin_uninstall" src="src/android/install.js" />
+
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="cordova-plugin-dingtalk">
+                <param name="android-package" value="com.wfl.corodva.dingtalk.cordova-plugin-dingtalk" />
+            </feature>
+            <preference name="DINGTALK_APPID" value="$DINGTALK_APPID"/>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:exported="true" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:launchMode="singleInstance" android:name=".ddshare.DDShareActivity">
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <data android:scheme="$DINGTALK_APPID"/>
+                </intent-filter>
+            </activity>
+        </config-file>
+
+        <config-file parent="/*" target="AndroidManifest.xml" />
+        <source-file src="src/android/cordova-plugin-dingtalk.java" target-dir="src/com/wfl/corodva/dingtalk/cordova-plugin-dingtalk" />
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+    </platform>
+
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="cordova-plugin-dingtalk">
+                <param name="ios-package" value="cordova-plugin-dingtalk" />
+            </feature>
+        </config-file>
+        <source-file src="src/ios/cordova-plugin-dingtalk.m" />
+    </platform>
+</plugin>
