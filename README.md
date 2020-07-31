@@ -56,5 +56,5 @@ Dingtalk.shareWebObject(successcallback, errorcallback, msgObj);
 
 ## 特别鸣谢
 
-[cordova-plugin-dingtalk-ios](https://github.com/wayshon/cordova-plugin-dingtalk-ios.git)
-[cordova-plugin-dingding](https://github.com/songshaoping/cordova-plugin-dingding.git)
+-   [cordova-plugin-dingtalk-ios](https://github.com/wayshon/cordova-plugin-dingtalk-ios.git)
+-   [cordova-plugin-dingding](https://github.com/songshaoping/cordova-plugin-dingding.git)
