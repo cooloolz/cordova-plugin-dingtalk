@@ -32,7 +32,7 @@ import org.json.JSONObject;
 public class Dingding extends CordovaPlugin {
     public static final String TAG = "Cordova.Plugin.Dingding";
 
-    public static final String DINGDING_PROPERTY_KEY = "dingding_appid";
+    public static final String DINGDING_PROPERTY_KEY = "dingtalk_appid";
     public static final String PREFS_NAME = "Cordova.Plugin.Dingding";
     public static final int ERROR_REQUEST_FAIL = -1;
     public static final int ERROR_DINGDINDG_NOT_INSTALLED = -2;
