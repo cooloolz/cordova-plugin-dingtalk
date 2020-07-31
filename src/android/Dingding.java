@@ -92,7 +92,7 @@ public class Dingding extends CordovaPlugin {
         } else if(action.equals("shareTextObject")) {
             return this.shareTextObject(args, callbackContext);
         } else if(action.equals("shareImageObject")) {
-            return this.shareImageObject(args, callbackContext)
+            return this.shareImageObject(args, callbackContext);
         } else if (action.equals("shareWebObject")) {
             return this.shareWebObject(args, callbackContext);
         }
