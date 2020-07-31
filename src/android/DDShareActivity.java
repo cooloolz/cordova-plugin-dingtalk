@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.dingtalk.share.ddsharemodule.DDShareApiFactory;
 import com.android.dingtalk.share.ddsharemodule.IDDAPIEventHandler;
@@ -12,10 +13,10 @@ import com.android.dingtalk.share.ddsharemodule.ShareConstant;
 import com.android.dingtalk.share.ddsharemodule.message.BaseReq;
 import com.android.dingtalk.share.ddsharemodule.message.BaseResp;
 import com.android.dingtalk.share.ddsharemodule.message.SendAuth;
-import com.sundary.cordova.dd.Dingding;
+import com.wfl.corodva.dingtalk.Dingding;
 
 import org.apache.cordova.CallbackContext;
-import android.widget.Toast;
+import org.json.JSONObject;
 
 /**
  * @author scofieldwenwen
