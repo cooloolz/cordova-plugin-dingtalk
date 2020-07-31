@@ -1,8 +1,9 @@
-package com.sundary.cordova.dd;
+package com.wfl.corodva.dingtalk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.text.TextUtils;
 
 import com.android.dingtalk.share.ddsharemodule.DDShareApiFactory;
 import com.android.dingtalk.share.ddsharemodule.IDDShareApi;
@@ -15,15 +16,15 @@ import com.android.dingtalk.share.ddsharemodule.message.DDZhiFuBaoMesseage;
 import com.android.dingtalk.share.ddsharemodule.message.SendMessageToDD;
 import com.android.dingtalk.share.ddsharemodule.plugin.SignatureCheck;
 
-import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginResult;
 import org.apache.cordova.CordovaArgs;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.text.TextUtils;
 
 /**
  * @author scofieldwenwen
@@ -47,10 +48,6 @@ public class Dingding extends CordovaPlugin {
     @Override
     protected void pluginInitialize() {
         super.pluginInitialize();
-//        String appId = preferences.getString(DINGDING_PROPERTY_KEY, null);
-//        Log.d(TAG, "appId = " + appId);
-//        iddShareApi = DDShareApiFactory.createDDShareApi(cordova.getActivity(), appId, true);// APP_ID: dingoav7jhylkp3xpcjzno
-//        saveAppId(cordova.getContext(), appId);
 
         String id = getAppId(preferences);
         saveAppId(cordova.getActivity(), id);
@@ -58,7 +55,9 @@ public class Dingding extends CordovaPlugin {
 
         Log.d(TAG, "plugin initialized.");
     }
-
+    /**
+     * 注册钉钉API
+     */
     private void initDdAPI() {
         IDDShareApi api = getDdAPI(cordova.getActivity());
         if(ddPreferences == null) {
@@ -68,7 +67,9 @@ public class Dingding extends CordovaPlugin {
             api.registerApp(getAppId(preferences));
         }
     }
-
+    /**
+     * 获取钉钉API
+     */
     public static IDDShareApi getDdAPI(Context ctx) {
         if (iddShareApi == null) {
             String appId = getSavedAppId(ctx);
@@ -84,19 +85,23 @@ public class Dingding extends CordovaPlugin {
     @Override
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         Log.d(TAG, String.format("%s is called. Callback ID: %s.", action, callbackContext.getCallbackId()));
-        if (action.equals("isInstalled")) {
+        if (action.equals("isDingTalkInstalled")) {
             return this.isInstalled(callbackContext);
         } else if (action.equals("login")) {
             return this.login(callbackContext);
-        } else if (action.equals("share")) {
-            return this.share(args, callbackContext);
+        } else if(action.equals("shareTextObject")) {
+            return this.shareTextObject(args, callbackContext);
+        } else if(action.equals("shareImageObject")) {
+            return this.shareImageObject(args, callbackContext)
+        } else if (action.equals("shareWebObject")) {
+            return this.shareWebObject(args, callbackContext);
         }
         return false;
     }
     /**
-     * 分享网页消息
+     * 分享文本
      */
-    private boolean share(CordovaArgs args, CallbackContext callbackContext) {
+    private boolean shareTextObject(CordovaArgs args, CallbackContext callbackContext) {
         final IDDShareApi api = getDdAPI(cordova.getActivity());
 
         // check app is installed
@@ -107,7 +112,97 @@ public class Dingding extends CordovaPlugin {
             callbackContext.error(ERROR_DINGDINDG_NOT_INSTALLED);
             return true;
         }
-        // check if # of arguments is correct
+        //检查参数是否正确
+        final JSONObject params;
+        try {
+            params = args.getJSONObject(0);
+        } catch (JSONException e) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
+        //初始化一个DDTextMessage对象
+        DDTextMessage textObject = new DDTextMessage();
+        //用DDTextMessage对象初始化一个DDMediaMessage对象
+        DDMediaMessage mediaMessage = new DDMediaMessage();
+        //构造一个Req
+        SendMessageToDD.Req req = new SendMessageToDD.Req();
+        try {
+            textObject.mText = params.has("text") ? params.getString("text") : "text";
+            mediaMessage.mMediaObject = textObject;
+        }catch (JSONException e) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
+        req.mMediaMessage = mediaMessage;
+        if (api.sendReq(req)) {
+            Log.i(TAG, "Share request has been sent successfully.");
+            sendNoResultPluginResult(callbackContext);
+        } else {
+            Log.i(TAG, "Share request has been sent unsuccessfully.");
+            callbackContext.error(ERROR_REQUEST_FAIL);
+        }
+        return true;
+    }
+    /**
+     * 分享图片
+     */
+    private boolean shareImageObject(CordovaArgs args, CallbackContext callbackContext) {
+        final IDDShareApi api = getDdAPI(cordova.getActivity());
+
+        // check app is installed
+        boolean isInstalled = api.isDDAppInstalled();
+        Log.d(TAG, "isInstalled=" + isInstalled);
+        if (!isInstalled) {
+            Log.d(TAG, "未安装钉钉，请先安装");
+            callbackContext.error(ERROR_DINGDINDG_NOT_INSTALLED);
+            return true;
+        }
+        //检查参数是否正确
+        final JSONObject params;
+        try {
+            params = args.getJSONObject(0);
+        } catch (JSONException e) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
+        //初始化一个DDImageMessage
+        DDImageMessage imageObject = new DDImageMessage();
+        //构造一个mMediaObject对象
+        DDMediaMessage mediaMessage = new DDMediaMessage();
+        //构造一个Req
+        SendMessageToDD.Req req = new SendMessageToDD.Req();
+        try {
+            imageObject.mImageUrl = params.has("imageURL") ? params.getString("imageURL") : "https://oral2.s3.cn-north-1.amazonaws.com.cn/logo/icon-72%402x.jpg";
+            mediaMessage.mMediaObject = imageObject;
+        }catch (JSONException e) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
+        req.mMediaMessage = mediaMessage;
+        if (api.sendReq(req)) {
+            Log.i(TAG, "Share request has been sent successfully.");
+            sendNoResultPluginResult(callbackContext);
+        } else {
+            Log.i(TAG, "Share request has been sent unsuccessfully.");
+            callbackContext.error(ERROR_REQUEST_FAIL);
+        }
+        return true;
+    }
+    /**
+     * 分享网页消息
+     */
+    private boolean shareWebObject(CordovaArgs args, CallbackContext callbackContext) {
+        final IDDShareApi api = getDdAPI(cordova.getActivity());
+
+        // check app is installed
+        boolean isInstalled = api.isDDAppInstalled();
+        Log.d(TAG, "isInstalled=" + isInstalled);
+        if (!isInstalled) {
+            Log.d(TAG, "未安装钉钉，请先安装");
+            callbackContext.error(ERROR_DINGDINDG_NOT_INSTALLED);
+            return true;
+        }
+        //检查参数是否正确
         final JSONObject params;
         try {
             params = args.getJSONObject(0);
@@ -122,13 +217,13 @@ public class Dingding extends CordovaPlugin {
         //构造一个Req
         SendMessageToDD.Req webReq = new SendMessageToDD.Req();
         try {
-            webPageObject.mUrl = params.has("url") ? params.getString("url") : "http://www.baidu.com";
+            webPageObject.mUrl = params.has("pageURL") ? params.getString("pageURL") : "http://www.baidu.com";
             webMessage.mMediaObject = webPageObject;
 
             //填充网页分享必需参数，开发者需按照自己的数据进行填充
             webMessage.mTitle = params.has("title") ? params.getString("title") : "title";
-            webMessage.mContent = params.has("description") ? params.getString("description") : "description";
-            webMessage.mThumbUrl =params.has("thumb") ? params.getString("thumb") : "https://oral2.s3.cn-north-1.amazonaws.com.cn/logo/icon-72%402x.jpg";
+            webMessage.mContent = params.has("messageDescription") ? params.getString("messageDescription") : "messageDescription";
+            webMessage.mThumbUrl =params.has("thumbURL") ? params.getString("thumbURL") : "https://oral2.s3.cn-north-1.amazonaws.com.cn/logo/icon-72%402x.jpg";
         }catch (JSONException e) {
             callbackContext.error(ERROR_INVALID_PARAMETERS);
             return true;

@@ -3,6 +3,8 @@
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <name>cordova-plugin-dingtalk</name>
+    <description>A cordova plugin, a JS version of Dingtalk SDK</description>
+    <keywords>cordova,dingtalk,dingding,share</keywords>
 
     <!-- 参数 -->
     <preference name="DINGTALK_APPID" />
@@ -10,7 +12,7 @@
     <js-module name="cordova-plugin-dingtalk" src="www/cordova-plugin-dingtalk.js">
         <!-- 默认 -->
         <!-- <clobbers target="cordova.plugins.cordova-plugin-dingtalk" /> -->
-        <clobbers target="cordova.plugins.dingtalk" />
+        <clobbers target="Dingtalk" />
     </js-module>
 
     <platform name="android">
@@ -21,8 +23,8 @@
         <hook type="before_plugin_uninstall" src="src/android/install.js" />
 
         <config-file parent="/*" target="res/xml/config.xml">
-            <feature name="cordova-plugin-dingtalk">
-                <param name="android-package" value="com.wfl.corodva.dingtalk.cordova-plugin-dingtalk" />
+            <feature name="Dingtalk">
+                <param name="android-package" value="com.wfl.corodva.dingtalk.Dingding" />
             </feature>
             <preference name="DINGTALK_APPID" value="$DINGTALK_APPID"/>
         </config-file>
@@ -38,16 +40,44 @@
         </config-file>
 
         <config-file parent="/*" target="AndroidManifest.xml" />
-        <source-file src="src/android/cordova-plugin-dingtalk.java" target-dir="src/com/wfl/corodva/dingtalk/cordova-plugin-dingtalk" />
-        <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+        <source-file src="src/android/Dingding.java" target-dir="src/com/wfl/corodva/dingtalk" />
+        <framework src="android-build.gradle" custom="true" type="gradleReference" />
     </platform>
 
     <platform name="ios">
         <config-file parent="/*" target="config.xml">
-            <feature name="cordova-plugin-dingtalk">
-                <param name="ios-package" value="cordova-plugin-dingtalk" />
+            <feature name="Dingtalk">
+                    <param name="ios-package" value="DingShare" />
+                    <param name="onload" value="true" />
             </feature>
+            <preference name="DINGTALK_APPID" value="$DINGTALK_APPID"/>
         </config-file>
-        <source-file src="src/ios/cordova-plugin-dingtalk.m" />
+        <header-file src="src/ios/DingShare.h" />
+        <source-file src="src/ios/DingShare.m" />
+        <!-- <source-file src="src/ios/cordova-plugin-dingtalk.m" /> -->
+        <framework src="src/ios/DTShareKit.framework" custom="true" framework="true"/>
+        <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+            <array>
+                <string>dingtalk</string>
+                <string>dingtalk-open</string>
+            </array>
+        </config-file>
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>CFBundleURLName</key>
+                    <string>dingtalk</string>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>$DINGTALK_APPID</string>
+                    </array>
+                </dict>
+            </array>
+        </config-file>
+        <info>
+            if your cordova version brefore 5.1.1,check the URL Type using XCode,after installing this plugin,check the URL Types in your Xcode project.If you don't find URL Types for dingding，manually add it.
+        </info>
     </platform>
 </plugin>

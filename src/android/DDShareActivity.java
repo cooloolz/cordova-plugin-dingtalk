@@ -84,21 +84,20 @@ public class DDShareActivity extends Activity implements IDDAPIEventHandler {
                 case BaseResp.ErrCode.ERR_OK:
                     Log.d(TAG, "分享成功");
                     showToast("分享成功");
-                    ctx.success("分享成功"+errMsg);
+                    ctx.success(getCallbackMsg(1,"分享成功"));
                     break;
                 case BaseResp.ErrCode.ERR_USER_CANCEL:
                     Log.d(TAG, errCode + "分享取消");
                     showToast("分享取消");
-                    ctx.error("分享取消"+errMsg);
+                    ctx.success(getCallbackMsg(2,"分享取消"));
                     break;
                 default:
                     Log.e(TAG, errCode + "分享失败" + baseResp.mErrStr);
                     showToast("分享失败" + baseResp.mErrStr);
-                    ctx.error("分享失败"+errMsg);
+                    ctx.error(getCallbackMsg(0,"分享失败"));
                     break;
             }
         }
-
         finish();
     }
 
@@ -111,5 +110,22 @@ public class DDShareActivity extends Activity implements IDDAPIEventHandler {
 
     private void showToast(String msg) {
         //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+    /**
+     * Callback json
+     *
+     * @param code
+     * @param msg
+     * @return Callback json
+     */
+    public String getCallbackMsg(int code, String msg){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("code", code);
+            jsonObject.put("msg", msg);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }
